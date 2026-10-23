@@ -6,6 +6,8 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+const movieRoutes = require('./routes/movieRoutes');
+app.use('/api/movies', movieRoutes);
 
 const PORT = process.env.PORT || 4000;
 
