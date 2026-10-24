@@ -7,6 +7,16 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Importación de Rutas
+const authRouter = require('./routers/authRouter');
+const movieRoutes = require('./routes/movieRoutes');
+const reservationRoutes = require('./routes/reservationRoutes');
+
+// Montaje de Rutas
+app.use('/api/auth', authRouter);
+app.use('/api/movies', movieRoutes);
+app.use('/api/reservations', reservationRoutes);
+
 const PORT = process.env.PORT || 4000;
 
 app.get('/', (req, res) => {
@@ -16,6 +26,3 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
-
-const reservationRoutes = require('./routes/reservationRoutes');
-app.use('/api/reservations', reservationRoutes);
