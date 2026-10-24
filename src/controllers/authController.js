@@ -19,12 +19,12 @@ async function register(req, res) {
         // Hashear la contraseña obligatoriamente con bcrypt
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Guardar el usuario en la base de datos
+        // Guardar el usuario en la base de datos (con rol por defecto si no viene en el body)
         const newUserId = await userRepository.createUser({
             nombre,
             email,
             password: hashedPassword,
-            rol
+            rol: rol || 'user'
         });
 
         return res.status(201).json({
@@ -33,6 +33,7 @@ async function register(req, res) {
         });
 
     } catch (error) {
+        console.error("❌ Error detallado en el registro:", error);
         return res.status(500).json({ message: 'Error interno del servidor', error: error.message });
     }
 }
@@ -53,7 +54,8 @@ async function login(req, res) {
         }
 
         // Comparar la contraseña ingresada con la contraseña hasheada
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const userPassword = user.password || user.contrasena;
+        const isPasswordValid = await bcrypt.compare(password, userPassword);
         if (!isPasswordValid) {
             return res.status(401).json({ message: 'Contraseña incorrecta.' });
         }
@@ -62,14 +64,15 @@ async function login(req, res) {
         return res.status(200).json({
             message: '¡Inicio de sesión exitoso!',
             user: {
-                id: user.id_usuario,
+                id: user.id_usuario || user.id,
                 nombre: user.nombre,
                 email: user.email,
-                rol: user.rol
+                rol: user.rol || 'user'
             }
         });
 
     } catch (error) {
+        console.error("❌ Error detallado en el login:", error);
         return res.status(500).json({ message: 'Error interno del servidor', error: error.message });
     }
 }
