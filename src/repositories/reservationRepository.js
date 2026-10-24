@@ -58,7 +58,4 @@ class ReservationRepository {
     }
 }
 
-main = {
-    // Corrección rápida de sintaxis para exportar la clase limpiamente
-}
 module.exports = new ReservationRepository();
