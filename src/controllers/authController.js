@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const userRepository = require('../repositories/userRepository');
 
-// Registro de Usuario con bcrypt.hash
+// Registro de Usuario con bcrypt.hash y validación de contraseña
 async function register(req, res) {
     try {
         const { nombre, email, password, rol } = req.body;
@@ -9,6 +9,15 @@ async function register(req, res) {
         if (!nombre || !email || !password) {
             return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
         }
+
+        // --- VALIDACIÓN DE CRITERIOS DE CONTRASEÑA ---
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        if (!passwordRegex.test(password)) {
+            return res.status(400).json({ 
+                message: 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.' 
+            });
+        }
+        // ---------------------------------------------
 
         // Verificar si el correo ya está registrado
         const existingUser = await userRepository.findByEmail(email);
